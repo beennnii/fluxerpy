@@ -2,11 +2,9 @@
 Main client for Fluxer API
 """
 
-import asyncio
-from typing import Optional, List, Dict, Any, Callable
+from typing import Optional, List, Dict, Callable
 from .http import HTTPClient
 from .models import User, Post, Comment
-from .errors import FluxerException
 
 
 class Client:

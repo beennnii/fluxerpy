@@ -3,7 +3,6 @@ HTTP client for Fluxer API
 """
 
 import aiohttp
-import asyncio
 from typing import Optional, Dict, Any
 from .errors import AuthenticationError, NotFoundError, RateLimitError, APIError
 
