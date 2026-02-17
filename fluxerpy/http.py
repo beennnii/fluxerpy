@@ -7,6 +7,11 @@ import asyncio
 from typing import Optional, Dict, Any
 from .errors import AuthenticationError, NotFoundError, RateLimitError, APIError
 
+try:
+    from . import __version__
+except ImportError:
+    __version__ = "0.1.0"
+
 
 class HTTPClient:
     """
@@ -39,7 +44,7 @@ class HTTPClient:
         """Get headers for API requests"""
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "fluxerpy/0.1.0"
+            "User-Agent": f"fluxerpy/{__version__}"
         }
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"

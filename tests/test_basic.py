@@ -3,7 +3,6 @@ Basic tests for fluxerpy
 """
 
 import pytest
-import asyncio
 from fluxerpy import Client, User, Post, Comment
 from fluxerpy.errors import FluxerException, AuthenticationError, NotFoundError
 
