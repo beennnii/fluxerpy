@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fluxerpy"
+name = "fluxerpy3"
 version = "0.1.0"
 description = "A Python wrapper for the Fluxer.web API, similar to discord.py"
 readme = "README.md"

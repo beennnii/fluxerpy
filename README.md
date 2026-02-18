@@ -1,4 +1,4 @@
-# fluxerpy
+# fluxerpy3
 
 A Python wrapper for the Fluxer.web API, inspired by discord.py's design.
 
@@ -27,11 +27,11 @@ pip install -e .
 
 ```python
 import asyncio
-import fluxerpy
+import fluxerpy3
 
 async def main():
     # Create a client with your authentication token
-    client = fluxerpy.Client(token="your_token_here")
+    client = fluxerpy3.Client(token="your_token_here")
     
     async with client:
         # Get current user
@@ -44,7 +44,7 @@ async def main():
             print(f"{post.author.username}: {post.content}")
         
         # Create a post
-        new_post = await client.create_post("Hello from fluxerpy! 🚀")
+        new_post = await client.create_post("Hello from fluxerpy3! 🚀")
         print(f"Created post: {new_post.id}")
 
 asyncio.run(main())
@@ -102,7 +102,7 @@ await comment.delete()
 ### Event Handling
 
 ```python
-client = fluxerpy.Client(token="your_token_here")
+client = fluxerpy3.Client(token="your_token_here")
 
 @client.event
 async def on_post_created(post):
@@ -207,11 +207,11 @@ Represents a comment on a post.
 ## Error Handling
 
 ```python
-import fluxerpy
-from fluxerpy import AuthenticationError, NotFoundError, RateLimitError
+import fluxerpy3
+from fluxerpy3 import AuthenticationError, NotFoundError, RateLimitError
 
 try:
-    async with fluxerpy.Client(token="invalid_token") as client:
+    async with fluxerpy3.Client(token="invalid_token") as client:
         await client.get_me()
 except AuthenticationError:
     print("Invalid authentication token")

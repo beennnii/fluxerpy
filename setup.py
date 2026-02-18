@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="fluxerpy",
+    name="fluxerpy3",
     version="0.1.0",
     author="beennnii",
     description="A Python wrapper for the Fluxer.web API, similar to discord.py",

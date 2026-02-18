@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-02-17
 
 ### Added
-- Initial release of Fluxerpy API wrapper
+- Initial release of Fluxerpy3 API wrapper
 - `Client` class for interacting with Fluxer API
 - `HTTPClient` for handling HTTP requests with proper error handling
 - Data models: `User`, `Post`, `Comment`

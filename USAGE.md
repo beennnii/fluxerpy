@@ -1,4 +1,4 @@
-# Fluxerpy - Usage Guide
+# Fluxerpy3 - Usage Guide
 
 ## Table of Contents
 
@@ -31,9 +31,9 @@ pip install -e .
 To use the Fluxer API, you need an authentication token. Create a client with your token:
 
 ```python
-import fluxerpy
+import fluxerpy3
 
-client = fluxerpy.Client(token="your_token_here")
+client = fluxerpy3.Client(token="your_token_here")
 ```
 
 ## Client Basics
@@ -44,10 +44,10 @@ The client should be properly initialized and closed. Use it as a context manage
 
 ```python
 import asyncio
-import fluxerpy
+import fluxerpy3
 
 async def main():
-    async with fluxerpy.Client(token="your_token") as client:
+    async with fluxerpy3.Client(token="your_token") as client:
         me = await client.get_me()
         print(f"Logged in as: {me.username}")
 
@@ -243,7 +243,7 @@ asyncio.run(main())
 Handle different types of errors:
 
 ```python
-from fluxerpy import (
+from fluxerpy3 import (
     Client,
     AuthenticationError,
     NotFoundError,
@@ -272,7 +272,7 @@ async def main():
 Always use the client as a context manager to ensure proper cleanup:
 
 ```python
-async with fluxerpy.Client(token="your_token") as client:
+async with fluxerpy3.Client(token="your_token") as client:
     # your code here
 ```
 
@@ -282,7 +282,7 @@ Implement retry logic for rate limits:
 
 ```python
 import asyncio
-from fluxerpy import RateLimitError
+from fluxerpy3 import RateLimitError
 
 async def with_retry(coro, max_retries=3):
     for attempt in range(max_retries):
@@ -314,7 +314,7 @@ Enable better IDE support with type hints:
 
 ```python
 from typing import List
-from fluxerpy import Client, Post
+from fluxerpy3 import Client, Post
 
 async def get_popular_posts(client: Client, limit: int = 10) -> List[Post]:
     posts = await client.get_feed(limit=limit)
@@ -344,7 +344,7 @@ Here's a complete example that demonstrates various features:
 ```python
 import asyncio
 import logging
-from fluxerpy import Client, RateLimitError
+from fluxerpy3 import Client, RateLimitError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

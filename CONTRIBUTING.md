@@ -1,6 +1,6 @@
-# Contributing to Fluxerpy
+# Contributing to Fluxerpy3
 
-Thank you for your interest in contributing to Fluxerpy! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Fluxerpy3! This document provides guidelines and instructions for contributing.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ pytest tests/ -v
 Run tests with coverage:
 
 ```bash
-pytest tests/ --cov=fluxerpy --cov-report=html
+pytest tests/ --cov=fluxerpy3 --cov-report=html
 ```
 
 ## Code Style
@@ -87,4 +87,4 @@ If you have questions, feel free to:
 - Open an issue for discussion
 - Reach out to the maintainers
 
-Thank you for contributing to Fluxerpy! 🚀
+Thank you for contributing to Fluxerpy3! 🚀

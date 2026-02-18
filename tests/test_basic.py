@@ -1,10 +1,10 @@
 """
-Basic tests for fluxerpy
+Basic tests for fluxerpy3
 """
 
 import pytest
-from fluxerpy import Client, User, Post, Comment
-from fluxerpy.errors import FluxerException, AuthenticationError, NotFoundError
+from fluxerpy3 import Client, User, Post, Comment
+from fluxerpy3.errors import FluxerException, AuthenticationError, NotFoundError
 
 
 def test_client_initialization():
