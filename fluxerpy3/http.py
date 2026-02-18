@@ -32,7 +32,8 @@ class HTTPClient:
     async def start(self):
         """Initialize the HTTP session"""
         if self.session is None or self.session.closed:
-            self.session = aiohttp.ClientSession()
+            connector = aiohttp.TCPConnector(family=2)  # force IPv4
+            self.session = aiohttp.ClientSession(connector=connector)
             
     async def close(self):
         """Close the HTTP session"""
