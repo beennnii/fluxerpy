@@ -1,1 +1,1 @@
-# Tests for fluxerpy
+# Tests for fluxerpy3

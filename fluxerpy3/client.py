@@ -14,10 +14,10 @@ class Client:
     
     Example:
         ```python
-        import fluxerpy
+        import fluxerpy3
         import asyncio
         
-        client = fluxerpy.Client(token="your_token_here")
+        client = fluxerpy3.Client(token="your_token_here")
         
         async def main():
             await client.start()

@@ -3,11 +3,11 @@ Example showing user interactions
 """
 
 import asyncio
-import fluxerpy
+import fluxerpy3
 
 
 async def main():
-    async with fluxerpy.Client(token="your_token_here") as client:
+    async with fluxerpy3.Client(token="your_token_here") as client:
         # Search for a user by username
         user = await client.get_user_by_username("example_user")
         print(f"Found user: {user.username}")

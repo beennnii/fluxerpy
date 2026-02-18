@@ -5,7 +5,7 @@ Advanced example showing error handling and best practices
 import asyncio
 import logging
 from typing import List
-from fluxerpy import (
+from fluxerpy3 import (
     Client,
     Post,
     AuthenticationError,

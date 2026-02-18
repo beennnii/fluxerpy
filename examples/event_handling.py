@@ -1,12 +1,12 @@
 """
-Example showing event handling in fluxerpy
+Example showing event handling in fluxerpy3
 """
 
 import asyncio
-import fluxerpy
+import fluxerpy3
 
 
-client = fluxerpy.Client(token="your_token_here")
+client = fluxerpy3.Client(token="your_token_here")
 
 
 @client.event

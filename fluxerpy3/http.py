@@ -43,7 +43,7 @@ class HTTPClient:
         """Get headers for API requests"""
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": f"fluxerpy/{__version__}"
+            "User-Agent": f"fluxerpy3/{__version__}"
         }
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"

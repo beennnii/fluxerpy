@@ -1,14 +1,14 @@
 """
-Basic example of using fluxerpy
+Basic example of using fluxerpy3
 """
 
 import asyncio
-import fluxerpy
+import fluxerpy3
 
 
 async def main():
     # Create a client with your authentication token
-    client = fluxerpy.Client(token="your_token_here")
+    client = fluxerpy3.Client(token="your_token_here")
     
     try:
         # Start the client
@@ -31,7 +31,7 @@ async def main():
                 print(f"  Likes: {post.like_count} | Comments: {post.comment_count}")
         
         # Create a post
-        new_post = await client.create_post("Hello from fluxerpy! 🚀")
+        new_post = await client.create_post("Hello from fluxerpy3! 🚀")
         print(f"\nCreated post: {new_post.id}")
         
     finally:
