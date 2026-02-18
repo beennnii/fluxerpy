@@ -14,7 +14,7 @@ A Python wrapper for the Fluxer.web API, inspired by discord.py's design.
 ## Installation
 
 ```bash
-pip install -r requirements.txt
+pip install fluxerpy3
 ```
 
 Or install in development mode:
