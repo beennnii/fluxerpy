@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fluxerpy3"
-version = "0.1.1"
-description = "A Python wrapper for the Fluxer.web API, similar to discord.py"
+version = "0.1.2.1"
+description = "A Python wrapper for the Fluxer API – a Discord-like platform. Inspired by discord.py."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
     {name = "beennnii"}
 ]
-keywords = ["fluxer", "api", "wrapper", "async", "social-media"]
+keywords = ["fluxer", "api", "wrapper", "async", "discord", "bot", "gateway"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Communications",
+    "Topic :: Communications :: Chat",
 ]
 dependencies = [
     "aiohttp>=3.9.0",

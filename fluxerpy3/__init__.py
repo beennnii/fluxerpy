@@ -8,7 +8,7 @@ from .models import User, Guild, Channel, Member, Role, Message, Reaction
 from .errors import FluxerException, AuthenticationError, NotFoundError, RateLimitError, APIError
 from .gateway import GatewayClient, Intents
 
-__version__ = "0.2.0"
+__version__ = "0.1.2.1"
 __author__ = "beennnii"
 __all__ = [
     "Client",

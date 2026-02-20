@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="fluxerpy3",
-    version="0.1.0",
+    version="0.1.2.1",
     author="beennnii",
-    description="A Python wrapper for the Fluxer.web API, similar to discord.py",
+    description="A Python wrapper for the Fluxer API – a Discord-like platform. Inspired by discord.py.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/beennnii/fluxerpy",
