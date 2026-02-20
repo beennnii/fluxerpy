@@ -299,7 +299,13 @@ class Guild(BaseModel):
     @property
     def member_count(self) -> int:
         """Approximate member count"""
-        return self._data.get("member_count", 0)
+        return (
+            self._data.get("member_count")
+            or self._data.get("memberCount")
+            or self._data.get("approximate_member_count")
+            or self._data.get("approximateMemberCount")
+            or 0
+        )
 
     @property
     def description(self) -> Optional[str]:
