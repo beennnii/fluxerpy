@@ -5,17 +5,12 @@ HTTP client for Fluxer API
 import aiohttp
 import json
 import logging
-import sys
 from typing import Optional, Dict, Any
 from .errors import AuthenticationError, NotFoundError, RateLimitError, APIError
 
-# Debug logger – prints to stderr so it doesn't interfere with normal output
+# Debug logger – silent by default; users can enable via logging.getLogger('fluxerpy3').setLevel(logging.DEBUG)
 _log = logging.getLogger("fluxerpy3.http")
-if not _log.handlers:
-    _handler = logging.StreamHandler(sys.stderr)
-    _handler.setFormatter(logging.Formatter("[fluxerpy3] %(levelname)s %(message)s"))
-    _log.addHandler(_handler)
-_log.setLevel(logging.DEBUG)
+_log.addHandler(logging.NullHandler())
 
 try:
     from . import __version__
@@ -91,11 +86,12 @@ class HTTPClient:
         headers.update(kwargs.pop("headers", {}))
 
         # capture request body for debug logging (does not affect the actual request)
+        _req_body_display: str
         _req_json = kwargs.get("json")
         _req_data = kwargs.get("data")
         if _req_json is not None:
             try:
-                _req_body_display = json.dumps(_req_json, indent=2, ensure_ascii=False)
+                _req_body_display = json.dumps(_req_json, ensure_ascii=False)
             except Exception:
                 _req_body_display = str(_req_json)
         elif _req_data is not None:
@@ -115,61 +111,11 @@ class HTTPClient:
                     
                 # Handle authentication errors
                 if response.status == 401:
-                    # --- detailed debug output ---
                     try:
                         body = await response.text()
-                    except Exception as read_err:
-                        body = f"<could not read response body: {read_err}>"
-
-                    # try to pretty-print JSON body
-                    try:
-                        body_pretty = json.dumps(json.loads(body), indent=2, ensure_ascii=False)
                     except Exception:
-                        body_pretty = body
-
-                    # mask token: show first 10 and last 4 chars
-                    token_display = "None"
-                    if self.token:
-                        t = self.token
-                        token_display = (
-                            f"{t[:10]}...{t[-4:]}" if len(t) > 14 else "***"
-                        )
-
-                    sent_headers_display = {}
-                    for k, v in headers.items():
-                        if k == "Authorization":
-                            t2 = v
-                            sent_headers_display[k] = f"{t2[:10]}...{t2[-4:]}" if len(t2) > 14 else "***"
-                        else:
-                            sent_headers_display[k] = v
-
-                    resp_headers_display = dict(response.headers)
-
-                    _log.error(
-                        "\n"
-                        "══════════════════════════════════════════\n"
-                        "  AUTHENTICATION FAILED (HTTP 401)\n"
-                        "══════════════════════════════════════════\n"
-                        "  REQUEST\n"
-                        "  -------\n"
-                        "  Method  : %s\n"
-                        "  URL     : %s\n"
-                        "  Token   : %s\n"
-                        "  Headers : %s\n"
-                        "\n"
-                        "  RESPONSE\n"
-                        "  --------\n"
-                        "  Status  : %s\n"
-                        "  Headers : %s\n"
-                        "  Body    :\n%s\n"
-                        "══════════════════════════════════════════",
-                        method, url, token_display,
-                        json.dumps(sent_headers_display, indent=4),
-                        response.status,
-                        json.dumps(resp_headers_display, indent=4),
-                        body_pretty,
-                    )
-                    # --- end debug output ---
+                        body = ""
+                    _log.debug("401 Unauthorized: %s %s — %s", method, url, body[:200])
                     raise AuthenticationError(
                         f"Authentication failed (HTTP 401): {body}",
                         response_body=body,
@@ -183,54 +129,9 @@ class HTTPClient:
                 if response.status >= 400:
                     try:
                         body = await response.text()
-                    except Exception as read_err:
-                        body = f"<could not read response body: {read_err}>"
-
-                    try:
-                        body_pretty = json.dumps(json.loads(body), indent=2, ensure_ascii=False)
                     except Exception:
-                        body_pretty = body
-
-                    token_display = "None"
-                    if self.token:
-                        t = self.token
-                        token_display = f"{t[:10]}...{t[-4:]}" if len(t) > 14 else "***"
-
-                    sent_headers_display = {}
-                    for k, v in headers.items():
-                        if k == "Authorization":
-                            t = v
-                            sent_headers_display[k] = f"{t[:10]}...{t[-4:]}" if len(t) > 14 else "***"
-                        else:
-                            sent_headers_display[k] = v
-
-                    _log.error(
-                        "\n"
-                        "══════════════════════════════════════════\n"
-                        "  API ERROR (HTTP %s)\n"
-                        "══════════════════════════════════════════\n"
-                        "  REQUEST\n"
-                        "  -------\n"
-                        "  Method  : %s\n"
-                        "  URL     : %s\n"
-                        "  Headers : %s\n"
-                        "  Body    :\n%s\n"
-                        "\n"
-                        "  RESPONSE\n"
-                        "  --------\n"
-                        "  Status  : %s\n"
-                        "  Headers : %s\n"
-                        "  Body    :\n%s\n"
-                        "══════════════════════════════════════════",
-                        response.status,
-                        method, url,
-                        json.dumps(sent_headers_display, indent=4),
-                        _req_body_display,
-                        response.status,
-                        json.dumps(dict(response.headers), indent=4),
-                        body_pretty,
-                    )
-
+                        body = ""
+                    _log.debug("HTTP %s: %s %s — %s", response.status, method, url, body[:200])
                     try:
                         error_data = json.loads(body)
                     except Exception:

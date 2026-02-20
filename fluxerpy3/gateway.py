@@ -8,18 +8,14 @@ Handles: connect, identify, heartbeat, resume, reconnect, event dispatch.
 import asyncio
 import json
 import logging
-import sys
 import time
 from typing import Any, Callable, Dict, List, Optional
 
 import aiohttp
 
+# Silent by default – users can enable via logging.getLogger('fluxerpy3').setLevel(logging.DEBUG)
 _log = logging.getLogger("fluxerpy3.gateway")
-if not _log.handlers:
-    _handler = logging.StreamHandler(sys.stderr)
-    _handler.setFormatter(logging.Formatter("[fluxerpy3.gateway] %(levelname)s %(message)s"))
-    _log.addHandler(_handler)
-_log.setLevel(logging.DEBUG)
+_log.addHandler(logging.NullHandler())
 
 # ---------------------------------------------------------------------------
 # Gateway opcodes (Discord-compatible)
@@ -137,7 +133,7 @@ class GatewayClient:
             if "?" not in url:
                 url += "?v=1&encoding=json"
 
-            _log.info("Connecting to gateway: %s", url)
+            _log.debug("Connecting to gateway: %s", url)
             try:
                 async with self._session.ws_connect(url) as ws:
                     self._ws = ws
@@ -183,7 +179,7 @@ class GatewayClient:
 
         if op == Opcode.HELLO:
             self._heartbeat_interval = payload["heartbeat_interval"] / 1000
-            _log.debug("HELLO received, heartbeat interval: %.2fs", self._heartbeat_interval)
+            _log.debug("HELLO: heartbeat_interval=%.2fs", self._heartbeat_interval)
             self._start_heartbeat()
             await self._identify()
 
