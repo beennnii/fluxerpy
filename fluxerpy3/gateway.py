@@ -44,7 +44,7 @@ class Intents:
     GUILD_MESSAGES   = 1 << 9   # MESSAGE_CREATE / UPDATE / DELETE in guilds
     MESSAGE_CONTENT  = 1 << 15  # access to message.content field
 
-    # Everything the moderation bot needs
+    # Sensible default: guilds + messages + message content
     DEFAULT = GUILDS | GUILD_MESSAGES | MESSAGE_CONTENT
 
 
@@ -113,7 +113,7 @@ class GatewayClient:
         Send a Presence Update to the gateway.
 
         status: "online" | "idle" | "dnd" | "invisible"
-        activity: optional dict, e.g. {"name": "Nachrichten moderieren", "type": 3}
+        activity: optional dict, e.g. {"name": "Listening to commands", "type": 2}
         """
         payload: Dict[str, Any] = {
             "op": Opcode.PRESENCE_UPDATE,
