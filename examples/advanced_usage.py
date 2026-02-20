@@ -1,35 +1,38 @@
 """
-Advanced example showing error handling and best practices
+Advanced example showing error handling and best practices with fluxerpy3
 """
 
 import asyncio
 import logging
+import os
 from typing import List
 from fluxerpy3 import (
     Client,
-    Post,
+    Guild,
+    Channel,
+    Message,
+    Member,
     AuthenticationError,
     NotFoundError,
     RateLimitError,
-    APIError
+    APIError,
 )
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
 
-async def retry_on_rate_limit(coro, max_retries=3):
+async def retry_on_rate_limit(coro, max_retries: int = 3):
     """
-    Retry a coroutine on rate limit errors
-    
+    Retry a coroutine on rate limit errors.
+
     Args:
         coro: The coroutine to retry
         max_retries: Maximum number of retries
-        
+
     Returns:
         The result of the coroutine
     """
@@ -40,135 +43,117 @@ async def retry_on_rate_limit(coro, max_retries=3):
             if attempt == max_retries - 1:
                 raise
             wait_time = e.retry_after or 60
-            logger.warning(f"Rate limited, waiting {wait_time}s (attempt {attempt + 1}/{max_retries})")
+            logger.warning(
+                f"Rate limited, waiting {wait_time}s (attempt {attempt + 1}/{max_retries})"
+            )
             await asyncio.sleep(wait_time)
 
 
-async def process_feed_with_filters(client: Client, min_likes: int = 10) -> List[Post]:
+async def scan_channel_messages(
+    client: Client, channel: Channel, keyword: str
+) -> List[Message]:
     """
-    Process feed and filter posts by engagement
-    
+    Fetch messages from a channel and filter by a keyword.
+
     Args:
         client: The Fluxer client
-        min_likes: Minimum number of likes to consider a post
-        
+        channel: The channel to scan
+        keyword: Filter keyword
+
     Returns:
-        List of filtered posts
+        List of matching Message objects
     """
     try:
-        posts = await retry_on_rate_limit(client.get_feed(limit=50))
-        
-        # Filter posts by likes
-        popular_posts = [post for post in posts if post.like_count >= min_likes]
-        logger.info(f"Found {len(popular_posts)} posts with at least {min_likes} likes")
-        
-        return popular_posts
-        
+        messages = await retry_on_rate_limit(
+            client.get_channel_messages(channel.id, limit=100)
+        )
+        matches = [m for m in messages if keyword.lower() in m.content.lower()]
+        logger.info(
+            f"Found {len(matches)} messages containing '{keyword}' in #{channel.name}"
+        )
+        return matches
     except APIError as e:
-        logger.error(f"API error while fetching feed: {e}")
+        logger.error(f"API error while scanning #{channel.name}: {e}")
         return []
 
 
-async def engage_with_posts(client: Client, posts: List[Post]):
+async def display_guild_info(client: Client, guild: Guild):
     """
-    Engage with a list of posts (like and comment)
-    
+    Print detailed information about a guild.
+
     Args:
         client: The Fluxer client
-        posts: List of posts to engage with
-    """
-    for post in posts:
-        try:
-            # Like the post
-            await retry_on_rate_limit(post.like())
-            logger.info(f"Liked post by @{post.author.username if post.author else 'unknown'}")
-            
-            # Comment on really popular posts
-            if post.like_count > 50:
-                comment_text = "Great content! 🔥"
-                await retry_on_rate_limit(post.comment(comment_text))
-                logger.info(f"Commented on popular post {post.id}")
-            
-            # Small delay between actions
-            await asyncio.sleep(1)
-            
-        except NotFoundError:
-            logger.warning(f"Post {post.id} not found, may have been deleted")
-        except Exception as e:
-            logger.error(f"Error engaging with post {post.id}: {e}")
-
-
-async def get_user_stats(client: Client, username: str):
-    """
-    Get and display user statistics
-    
-    Args:
-        client: The Fluxer client
-        username: Username to lookup
+        guild: The guild to inspect
     """
     try:
-        user = await retry_on_rate_limit(client.get_user_by_username(username))
-        
-        logger.info(f"""
-User Stats for @{user.username}:
-- Display Name: {user.display_name or 'Not set'}
-- Bio: {user.bio or 'No bio'}
-- Followers: {user.follower_count}
-- Following: {user.following_count}
-- Posts: {user.post_count}
-- Created: {user.created_at}
-        """)
-        
-        # Get user's recent posts
-        posts = await retry_on_rate_limit(user.get_posts(limit=5))
-        logger.info(f"\nRecent posts from @{user.username}:")
-        for i, post in enumerate(posts, 1):
-            logger.info(f"{i}. {post.content[:50]}... ({post.like_count} likes)")
-            
+        channels = await retry_on_rate_limit(client.get_guild_channels(guild.id))
+        roles = await retry_on_rate_limit(client.get_guild_roles(guild.id))
+
+        text_channels = [c for c in channels if c.is_text_channel]
+        voice_channels = [c for c in channels if c.is_voice_channel]
+        categories = [c for c in channels if c.is_category]
+
+        logger.info(
+            f"""
+Guild: {guild.name} (id={guild.id})
+  Members    : ~{guild.member_count}
+  Description: {guild.description or 'none'}
+  Locale     : {guild.preferred_locale}
+  Text channels  : {len(text_channels)}
+  Voice channels : {len(voice_channels)}
+  Categories     : {len(categories)}
+  Roles          : {len(roles)}
+"""
+        )
+
+        logger.info("Roles:")
+        for role in sorted(roles, key=lambda r: r.position, reverse=True):
+            logger.info(f"  [{role.position:>3}] {role.name}")
+
     except NotFoundError:
-        logger.error(f"User @{username} not found")
+        logger.error(f"Guild {guild.id} not found")
     except Exception as e:
-        logger.error(f"Error getting user stats: {e}")
+        logger.error(f"Error fetching guild info: {e}")
 
 
 async def main():
     """Main function demonstrating advanced usage"""
-    
-    # Get token from environment or configuration
-    token = "your_token_here"  # In production, use environment variables
-    
+
+    # Use an environment variable instead of hardcoding the token
+    token = os.environ.get("FLUXER_TOKEN", "your_bot_token_here")
+
     try:
         async with Client(token=token) as client:
-            # Get current user
             try:
                 me = await client.get_me()
-                logger.info(f"Successfully logged in as @{me.username}")
+                logger.info(f"Logged in as @{me.username} (bot={me.bot})")
             except AuthenticationError:
-                logger.error("Authentication failed. Please check your token.")
+                logger.error("Authentication failed. Check your bot token.")
                 return
-            
-            # Get and process feed
-            logger.info("Fetching and processing feed...")
-            popular_posts = await process_feed_with_filters(client, min_likes=10)
-            
-            # Engage with popular posts
-            if popular_posts:
-                logger.info(f"Engaging with {len(popular_posts)} popular posts...")
-                await engage_with_posts(client, popular_posts[:5])  # Limit to 5 posts
-            
-            # Get stats for a specific user
-            await get_user_stats(client, "example_user")
-            
-            # Create a summary post
-            summary = f"Just processed {len(popular_posts)} posts! 🚀"
-            try:
-                new_post = await retry_on_rate_limit(client.create_post(summary))
-                logger.info(f"Created summary post: {new_post.id}")
-            except Exception as e:
-                logger.error(f"Failed to create summary post: {e}")
-            
+
+            guilds = await client.get_guilds()
+            logger.info(f"Bot is in {len(guilds)} guild(s)")
+
+            for guild in guilds:
+                await display_guild_info(client, guild)
+
+                # Scan the first text channel for a keyword
+                channels = await client.get_guild_channels(guild.id)
+                text_channels = [c for c in channels if c.is_text_channel]
+                if text_channels:
+                    matches = await scan_channel_messages(
+                        client, text_channels[0], keyword="hello"
+                    )
+                    if matches:
+                        logger.info(
+                            f"Sample match: [{matches[0].author}] {matches[0].content}"
+                        )
+
+                # Small delay between guilds
+                await asyncio.sleep(0.5)
+
             logger.info("Session completed successfully!")
-            
+
     except Exception as e:
         logger.error(f"Unexpected error in main: {e}", exc_info=True)
 

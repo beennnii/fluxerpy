@@ -1,22 +1,29 @@
 """
-Fluxer.py - A Python wrapper for the Fluxer.web API
+Fluxer.py - A Python wrapper for the Fluxer API
 Similar to discord.py architecture
 """
 
 from .client import Client
-from .models import User, Post, Comment, Message
-from .errors import FluxerException, AuthenticationError, NotFoundError, RateLimitError
+from .models import User, Guild, Channel, Member, Role, Message, Reaction
+from .errors import FluxerException, AuthenticationError, NotFoundError, RateLimitError, APIError
+from .gateway import GatewayClient, Intents
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 __author__ = "beennnii"
 __all__ = [
     "Client",
     "User",
-    "Post",
-    "Comment",
+    "Guild",
+    "Channel",
+    "Member",
+    "Role",
     "Message",
+    "Reaction",
+    "GatewayClient",
+    "Intents",
     "FluxerException",
     "AuthenticationError",
     "NotFoundError",
     "RateLimitError",
+    "APIError",
 ]
