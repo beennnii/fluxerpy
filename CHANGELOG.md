@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-02-20
+
+### Fixed
+- Authorization header now correctly uses `Bot` prefix for bot tokens
+- Fixed `/users/me` endpoint to `/users/@me` matching the Fluxer API spec
+- Detailed debug output for all 4xx/5xx API errors including request body, response headers and body
+- `AuthenticationError` now includes `response_body` attribute for programmatic access
+- User-Agent header updated to browser-compatible string to avoid server-side rejection
+- Added `Origin` and `Referer` headers for proper request context
+
 ## [0.1.0] - 2026-02-17
 
 ### Added
