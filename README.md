@@ -224,12 +224,4 @@ MIT License – see LICENSE file for details
 
 ## Contributing
 
-Contributions are welcome! Please open a Pull Request.
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Contributing
-
 Contributions are welcome! Please feel free to submit a Pull Request.
