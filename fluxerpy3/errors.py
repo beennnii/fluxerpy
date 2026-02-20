@@ -10,7 +10,9 @@ class FluxerException(Exception):
 
 class AuthenticationError(FluxerException):
     """Raised when authentication fails"""
-    pass
+    def __init__(self, message, response_body=None):
+        super().__init__(message)
+        self.response_body = response_body
 
 
 class NotFoundError(FluxerException):

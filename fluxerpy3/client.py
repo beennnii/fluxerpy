@@ -100,7 +100,7 @@ class Client:
         Returns:
             User object representing the authenticated user
         """
-        data = await self.http.get("users/me")
+        data = await self.http.get("users/@me")
         return User(data, client=self)
         
     async def get_user(self, user_id: str) -> User:
