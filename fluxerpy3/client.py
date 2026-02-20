@@ -4,7 +4,7 @@ Main client for Fluxer API
 
 from typing import Optional, List, Dict, Callable
 from .http import HTTPClient
-from .models import User, Post, Comment
+from .models import User, Post, Comment, Message
 
 
 class Client:
@@ -337,4 +337,80 @@ class Client:
             True if successful
         """
         await self.http.delete(f"comments/{comment_id}/like")
+        return True
+
+    # Guild endpoints
+
+    async def get_guilds(self) -> List[Dict]:
+        """
+        Get all guilds the authenticated user/bot is a member of
+
+        Returns:
+            List of guild data dicts
+        """
+        data = await self.http.get("users/@me/guilds")
+        return data if isinstance(data, list) else []
+
+    async def get_guild_channels(self, guild_id: str) -> List[Dict]:
+        """
+        Get all channels in a guild
+
+        Args:
+            guild_id: The ID of the guild
+
+        Returns:
+            List of channel data dicts
+        """
+        data = await self.http.get(f"guilds/{guild_id}/channels")
+        return data if isinstance(data, list) else []
+
+    # Channel / Message endpoints
+
+    async def get_channel_messages(self, channel_id: str, limit: int = 50) -> List[Message]:
+        """
+        Get recent messages from a channel
+
+        Args:
+            channel_id: The ID of the channel
+            limit: Maximum number of messages to return (default 50)
+
+        Returns:
+            List of Message objects (newest first)
+        """
+        data = await self.http.get(
+            f"channels/{channel_id}/messages",
+            params={"limit": limit},
+        )
+        messages = data if isinstance(data, list) else []
+        return [Message(m, client=self) for m in messages]
+
+    async def send_message(self, channel_id: str, content: str) -> Message:
+        """
+        Send a message to a channel
+
+        Args:
+            channel_id: The ID of the channel
+            content: The message text
+
+        Returns:
+            The created Message object
+        """
+        data = await self.http.post(
+            f"channels/{channel_id}/messages",
+            json={"content": content},
+        )
+        return Message(data, client=self)
+
+    async def delete_message(self, channel_id: str, message_id: str) -> bool:
+        """
+        Delete a message
+
+        Args:
+            channel_id: The ID of the channel the message is in
+            message_id: The ID of the message to delete
+
+        Returns:
+            True if successful
+        """
+        await self.http.delete(f"channels/{channel_id}/messages/{message_id}")
         return True

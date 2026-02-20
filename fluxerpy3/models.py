@@ -219,3 +219,56 @@ class Comment(BaseModel):
         """Delete this comment"""
         if self._client:
             return await self._client.delete_comment(self.id)
+
+
+class Message(BaseModel):
+    """Represents a message in a Fluxer channel (guild text channel)"""
+
+    @property
+    def content(self) -> str:
+        """The message text"""
+        return self._data.get("content", "")
+
+    @property
+    def channel_id(self) -> str:
+        """ID of the channel this message belongs to"""
+        return self._data.get("channel_id", "")
+
+    @property
+    def author(self) -> Optional["User"]:
+        """The message author (if available)"""
+        author_data = self._data.get("author")
+        if author_data:
+            return User(author_data, self._client)
+        return None
+
+    @property
+    def post_id(self) -> str:
+        """Alias for id – keeps backward compatibility with Comment-based moderation logic"""
+        return self.id
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        """When the message was sent"""
+        timestamp = self._data.get("timestamp") or self._data.get("created_at")
+        if timestamp:
+            return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+        return None
+
+    async def delete(self):
+        """Delete this message"""
+        if self._client:
+            return await self._client.delete_message(self.channel_id, self.id)
+
+    async def reply(self, content: str):
+        """Send a message to the same channel"""
+        if self._client:
+            return await self._client.send_message(self.channel_id, content)
+
+    async def comment(self, content: str):
+        """Alias for reply() – keeps backward compatibility with Post-based moderation logic"""
+        return await self.reply(content)
+
+    async def get_comments(self, limit: int = 20) -> list:
+        """No-op – messages don't have comments; exists for interface compatibility"""
+        return []
