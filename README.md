@@ -155,7 +155,6 @@ asyncio.run(main())
 **User methods:**
 - `get_me()` – Get the authenticated bot user
 - `get_user(user_id)` – Get a user by ID
-- `get_user_by_username(username)` – Look up a user by username
 
 **Guild methods:**
 - `get_guilds()` – List all guilds the bot is in

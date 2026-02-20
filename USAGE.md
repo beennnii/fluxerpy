@@ -87,9 +87,6 @@ print(me.username, me.id, me.bot)
 ```python
 # by ID
 user = await client.get_user("user_id_here")
-
-# by username
-user = await client.get_user_by_username("example")
 print(user.display_name, user.avatar_url)
 ```
 

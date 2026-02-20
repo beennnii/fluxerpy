@@ -122,19 +122,6 @@ class Client:
         data = await self.http.get(f"users/{user_id}")
         return User(data, client=self)
 
-    async def get_user_by_username(self, username: str) -> User:
-        """
-        Lookup a user by their username.
-
-        Args:
-            username: The username to search for
-
-        Returns:
-            User object
-        """
-        data = await self.http.get(f"users/username/{username}")
-        return User(data, client=self)
-
     # ------------------------------------------------------------------
     # Guild endpoints
     # ------------------------------------------------------------------
